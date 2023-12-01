@@ -1,5 +1,7 @@
 import winreg
 import json
+import chardet
+import string
 
 def get_registry_data(hive, key_path, depth=0, max_depth=1):
     if depth > max_depth:
@@ -14,7 +16,7 @@ def get_registry_data(hive, key_path, depth=0, max_depth=1):
             while True:
                 try:
                     name, value, type = winreg.EnumValue(key, value_count)
-                    main_key[name] = decode_utf16(value)
+                    main_key[name] = value
                     value_count += 1
                 except OSError:
                     break
@@ -24,7 +26,6 @@ def get_registry_data(hive, key_path, depth=0, max_depth=1):
                     subkey_name = winreg.EnumKey(key, subkey_count)
                     subkey_path = f"{key_path}\\{subkey_name}"
                     subkey_values = get_registry_data(hive, subkey_path, depth + 1, max_depth)
-
                     main_key[subkey_name] = subkey_values
                     subkey_count += 1
                 except OSError:
@@ -35,15 +36,22 @@ def get_registry_data(hive, key_path, depth=0, max_depth=1):
         print(f"Cannot find the key: {key_path}")
         return {}
 
-def decode_utf16(data):
-    if isinstance(data, bytes):
-        try:
-            decoded_string = bytearray(data, 'utf-16le').decode('utf-16le')
-            return decoded_string
-        except UnicodeDecodeError:
-            return data
-    else:
-        return data
+def decode_registry_data(data):
+    encoding_info = chardet.detect(data)
+
+    try:
+        if encoding_info['encoding'] and encoding_info['confidence'] > 0.7:
+            print(encoding_info)
+            return data.decode(encoding_info['encoding'])
+        else:
+            raise ValueError("인코딩 형식 신뢰 불가")
+
+    except UnicodeDecodeError:
+        raise ValueError("디코딩 실패")
+
+data = b"46000000130000000900000000000000550000003132372e302e302e313a31363130353b3132372e302e302e313a31363130363b3132372e302e302e313a31363130373b3b3132372e302e302e313a32313330303b3b2a2e6c6f63616c3b3b6c6f63616c686f73743b000000000000000000000000000000000000000000000000000000000000000000000000"
+
+print(data.decode('ascii'))
 
 def get_current_user_sid():
     import locale
@@ -92,7 +100,6 @@ class HKEY_CLASSES_ROOT_Extractor:
                 associations[extensions[i]] = get_registry_data(hive, key_path, max_depth=2)
             except Exception as e:
                 associations[i] = None
-                print(e)
                 
         return associations
 
@@ -112,7 +119,7 @@ class HKEY_CURRENT_USER_Extractor:
     def extract_current_user_installed_programs():
         hive = winreg.HKEY_CURRENT_USER
         key_path = r"Software"
-        return get_registry_data(hive, key_path)
+        return get_registry_data(hive, key_path, max_depth=3)
 
     # 인터넷 설정 정보
     @staticmethod
@@ -156,7 +163,11 @@ class HKEY_CURRENT_USER_Extractor:
         key_path = r"Software\Microsoft\SystemCertificates"
         return get_registry_data(hive, key_path)
 
-
+    @staticmethod
+    def extract_user_assist():
+        hive = winreg.HKEY_CURRENT_USER
+        key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\Count"
+        return get_registry_data(hive, key_path)
 
 class HKEY_LOCAL_MACHINE_Extractor:
 
@@ -243,11 +254,12 @@ class HKEY_USERS_Extractor:
         hive = winreg.HKEY_USERS
         sid = get_current_user_sid()
         key_path = fr"{sid}\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist"
-        return get_registry_data(hive, key_path)
+        return get_registry_data(hive, key_path, max_depth=3)
+
 
 
 #save_json(HKEY_LOCAL_MACHINE_Extractor.extract_local_machine_security_authentication(), "registry_data.json")
-print(HKEY_LOCAL_MACHINE_Extractor.extract_system_services())
+# print(HKEY_CURRENT_USER_Extractor.extract_current_user_installed_programs())
 
 
 '''

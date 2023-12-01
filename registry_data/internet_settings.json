@@ -1,0 +1,567 @@
+{
+    "DisableCachingOfSSLPages": 0,
+    "IE5_UA_Backup_Flag": "5.0",
+    "PrivacyAdvanced": 1,
+    "SecureProtocols": 10240,
+    "CertificateRevocation": 0,
+    "User Agent": "Mozilla/4.0 (compatible; MSIE 8.0; Win32)",
+    "ZonesSecurityUpgrade": "6861081ced42d901",
+    "WarnonZoneCrossing": 0,
+    "EnableNegotiate": 1,
+    "ProxyEnable": 0,
+    "MigrateProxy": 1,
+    "LockDatabase": 133211690032781143,
+    "ProxyOverride": "127.0.0.1:16105;127.0.0.1:16106;127.0.0.1:16107;;127.0.0.1:21300;;*.local;;localhost;",
+    "ProxyHttp1.1": 1,
+    "EnableHttp1_1": 1,
+    "EnableHTTP2": 1,
+    "UrlEncoding": 0,
+    "EnablePunycode": 1,
+    "ShowPunycode": 0,
+    "WarnOnPostRedirect": 1,
+    "LegacyTLSAppcompat": 1,
+    "WarnonBadCertRecving": 1,
+    "5.0": {
+        "Cache": {
+            "ContentLimit": 330,
+            "TotalContentLimit": 495,
+            "AppContainerTotalContentLimit": 1000,
+            "AppContainerContentLimit": 50,
+            "Version": 4,
+            "Content": {
+                "CachePrefix": "",
+                "CacheVersion": 1,
+                "CacheLimit": 337920
+            },
+            "Cookies": {
+                "CachePrefix": "Cookie:",
+                "CacheVersion": 1,
+                "CacheLimit": 1
+            },
+            "Extensible Cache": {
+                "DNTException": {
+                    "CachePrefix": "DNTException:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\INetCookies\\DNTException",
+                    "CacheRelativePath": "Microsoft\\Windows\\INetCookies\\DNTException",
+                    "CacheOptions": 768,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "DOMStore": {
+                    "CachePrefix": "DOMStore",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Internet Explorer\\DOMStore",
+                    "CacheRelativePath": "Microsoft\\Internet Explorer\\DOMStore",
+                    "CacheOptions": 8,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1000
+                },
+                "EmieSiteList": {
+                    "CachePrefix": "EmieSiteList:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Internet Explorer\\EmieSiteList",
+                    "CacheRelativePath": "Microsoft\\Internet Explorer\\EmieSiteList",
+                    "CacheOptions": 768,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "EmieUserList": {
+                    "CachePrefix": "EmieUserList:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Internet Explorer\\EmieUserList",
+                    "CacheRelativePath": "Microsoft\\Internet Explorer\\EmieUserList",
+                    "CacheOptions": 768,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "feedplat": {
+                    "CachePrefix": "feedplat:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Feeds Cache",
+                    "CacheRelativePath": "Microsoft\\Feeds Cache",
+                    "CacheOptions": 0,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "iecompat": {
+                    "CachePrefix": "iecompat:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\IECompatCache",
+                    "CacheRelativePath": "Microsoft\\Windows\\IECompatCache",
+                    "CacheOptions": 777,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "iecompatua": {
+                    "CachePrefix": "iecompatua:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\IECompatUaCache",
+                    "CacheRelativePath": "Microsoft\\Windows\\IECompatUaCache",
+                    "CacheOptions": 777,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "iedownload": {
+                    "CachePrefix": "iedownload:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\IEDownloadHistory",
+                    "CacheRelativePath": "Microsoft\\Windows\\IEDownloadHistory",
+                    "CacheOptions": 9,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023110620231113": {
+                    "CachePrefix": ":2023110620231113: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023110620231113",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023110620231113",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023111320231120": {
+                    "CachePrefix": ":2023111320231120: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023111320231120",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023111320231120",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023112020231127": {
+                    "CachePrefix": ":2023112020231127: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023112020231127",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023112020231127",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023112720231128": {
+                    "CachePrefix": ":2023112720231128: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023112720231128",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023112720231128",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023112820231129": {
+                    "CachePrefix": ":2023112820231129: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023112820231129",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023112820231129",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023112920231130": {
+                    "CachePrefix": ":2023112920231130: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023112920231130",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023112920231130",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023113020231201": {
+                    "CachePrefix": ":2023113020231201: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023113020231201",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023113020231201",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "MSHist012023120120231202": {
+                    "CachePrefix": ":2023120120231202: ",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\History\\History.IE5\\MSHist012023120120231202",
+                    "CacheRelativePath": "Microsoft\\Windows\\History\\History.IE5\\MSHist012023120120231202",
+                    "CacheOptions": 11,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                }
+            },
+            "History": {
+                "CachePrefix": "Visited:",
+                "CacheVersion": 1,
+                "CacheLimit": 1
+            }
+        },
+        "LowCache": {
+            "Content": {
+                "CachePrefix": "",
+                "CacheVersion": 1
+            },
+            "Cookies": {
+                "CachePrefix": "Cookie:",
+                "CacheVersion": 1,
+                "CacheLimit": 1
+            },
+            "Extensible Cache": {
+                "EmieSiteList": {
+                    "CachePrefix": "EmieSiteList:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\LocalLow\\Microsoft\\Internet Explorer\\EmieSiteList",
+                    "CacheOptions": 768,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "EmieUserList": {
+                    "CachePrefix": "EmieUserList:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\LocalLow\\Microsoft\\Internet Explorer\\EmieUserList",
+                    "CacheOptions": 768,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "iecompat": {
+                    "CachePrefix": "iecompat:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\IECompatCache\\Low",
+                    "CacheRelativePath": "Microsoft\\Windows\\IECompatCache\\Low",
+                    "CacheOptions": 777,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                },
+                "iecompatua": {
+                    "CachePrefix": "iecompatua:",
+                    "CachePath": "C:\\Users\\bde57\\AppData\\Local\\Microsoft\\Windows\\IECompatUaCache\\Low",
+                    "CacheRelativePath": "Microsoft\\Windows\\IECompatUaCache\\Low",
+                    "CacheOptions": 777,
+                    "CacheRepair": 0,
+                    "CacheLimit": 1
+                }
+            },
+            "History": {
+                "CachePrefix": "Visited:",
+                "CacheVersion": 1,
+                "CacheLimit": 1
+            }
+        },
+        "User Agent": {
+            "Post Platform": {
+                "Zoom 3.6.0": ""
+            }
+        }
+    },
+    "Cache": {
+        "Persistent": 1
+    },
+    "Connections": {
+        "SavedLegacySettings": "46000000130000000900000000000000550000003132372e302e302e313a31363130353b3132372e302e302e313a31363130363b3132372e302e302e313a31363130373b3b3132372e302e302e313a32313330303b3b2a2e6c6f63616c3b3b6c6f63616c686f73743b000000000000000000000000000000000000000000000000000000000000000000000000",
+        "DefaultConnectionSettings": "46000000130000000900000000000000550000003132372e302e302e313a31363130353b3132372e302e302e313a31363130363b3132372e302e302e313a31363130373b3b3132372e302e302e313a32313330303b3b2a2e6c6f63616c3b3b6c6f63616c686f73743b000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "Http Filters": {
+        "RPA": {}
+    },
+    "Lockdown_Zones": {
+        "0": {
+            "": "",
+            "DisplayName": "Computer",
+            "PMDisplayName": "Computer [Protected Mode]",
+            "Description": "Your computer",
+            "Icon": "shell32.dll#0016",
+            "LowIcon": "inetcpl.cpl#005422",
+            "CurrentLevel": 0,
+            "Flags": 33,
+            "1200": 3,
+            "1400": 1
+        },
+        "1": {
+            "": "",
+            "DisplayName": "Local intranet",
+            "PMDisplayName": "Local intranet [Protected Mode]",
+            "Description": "This zone contains all Web sites that are on your organization's intranet.",
+            "Icon": "shell32.dll#0018",
+            "LowIcon": "inetcpl.cpl#005423",
+            "CurrentLevel": 0,
+            "1200": 3,
+            "1400": 1,
+            "Flags": 219
+        },
+        "2": {
+            "": "",
+            "DisplayName": "Trusted sites",
+            "PMDisplayName": "Trusted sites [Protected Mode]",
+            "Description": "This zone contains Web sites that you trust not to damage your computer or data.",
+            "Icon": "inetcpl.cpl#00004480",
+            "LowIcon": "inetcpl.cpl#005424",
+            "CurrentLevel": 0,
+            "Flags": 33,
+            "1200": 3,
+            "1400": 1
+        },
+        "3": {
+            "": "",
+            "DisplayName": "Internet",
+            "PMDisplayName": "Internet [Protected Mode]",
+            "Description": "This zone contains all Web sites you haven't placed in other zones",
+            "Icon": "inetcpl.cpl#001313",
+            "LowIcon": "inetcpl.cpl#005425",
+            "CurrentLevel": 0,
+            "Flags": 33,
+            "1200": 3,
+            "1400": 1
+        },
+        "4": {
+            "": "",
+            "DisplayName": "Restricted sites",
+            "PMDisplayName": "Restricted sites [Protected Mode]",
+            "Description": "This zone contains Web sites that could potentially damage your computer or data.",
+            "Icon": "inetcpl.cpl#00004481",
+            "LowIcon": "inetcpl.cpl#005426",
+            "CurrentLevel": 0,
+            "Flags": 33,
+            "1200": 3,
+            "1400": 3
+        }
+    },
+    "P3P": {
+        "History": {}
+    },
+    "Passport": {
+        "NumRegistrationRuns": 6,
+        "LowDAMap": {}
+    },
+    "TemplatePolicies": {
+        "High": {
+            "1400": 3
+        }
+    },
+    "Wpad": {},
+    "ZoneMap": {
+        "": "",
+        "ProxyByPass": 1,
+        "IntranetName": 1,
+        "UNCAsIntranet": 1,
+        "AutoDetect": 0,
+        "Domains": {
+            "": "",
+            "naver.com": {
+                "*": 2,
+                "tools": {
+                    "*": 2
+                }
+            }
+        },
+        "ProtocolDefaults": {
+            "": "",
+            "http": 3,
+            "https": 3,
+            "ftp": 3,
+            "file": 3,
+            "@ivt": 1,
+            "shell": 0,
+            "knownfolder": 0
+        },
+        "Ranges": {
+            "": ""
+        }
+    },
+    "Zones": {
+        "": "",
+        "SelfHealCount": 1,
+        "SecuritySafe": 1,
+        "0": {
+            "2001": 3,
+            "2004": 3,
+            "": "",
+            "DisplayName": "Computer",
+            "PMDisplayName": "Computer [Protected Mode]",
+            "Description": "Your computer",
+            "Icon": "shell32.dll#0016",
+            "LowIcon": "inetcpl.cpl#005422",
+            "CurrentLevel": 0,
+            "Flags": 33,
+            "1200": 0,
+            "1400": 0
+        },
+        "1": {
+            "2001": 0,
+            "2004": 0,
+            "": "",
+            "DisplayName": "Local intranet",
+            "PMDisplayName": "Local intranet [Protected Mode]",
+            "Description": "This zone contains all Web sites that are on your organization's intranet.",
+            "Icon": "shell32.dll#0018",
+            "LowIcon": "inetcpl.cpl#005423",
+            "CurrentLevel": 0,
+            "1200": 0,
+            "1400": 0,
+            "2500": 3,
+            "1406": 0,
+            "Flags": 219
+        },
+        "2": {
+            "2001": 0,
+            "2004": 0,
+            "": "",
+            "DisplayName": "Trusted sites",
+            "PMDisplayName": "Trusted sites [Protected Mode]",
+            "Description": "This zone contains Web sites that you trust not to damage your computer or data.",
+            "Icon": "inetcpl.cpl#00004480",
+            "LowIcon": "inetcpl.cpl#005424",
+            "CurrentLevel": 69632,
+            "Flags": 71,
+            "1200": 0,
+            "1400": 0,
+            "1001": 1,
+            "1004": 3,
+            "1201": 3,
+            "1206": 3,
+            "1207": 0,
+            "1208": 0,
+            "1209": 3,
+            "120A": 3,
+            "120C": 0,
+            "1402": 0,
+            "1405": 0,
+            "1406": 3,
+            "1407": 1,
+            "1408": 0,
+            "1409": 0,
+            "140A": 0,
+            "140C": 0,
+            "140D": 0,
+            "1601": 0,
+            "1604": 0,
+            "1605": 0,
+            "1606": 0,
+            "1607": 3,
+            "1608": 0,
+            "1609": 1,
+            "160A": 0,
+            "160B": 0,
+            "1802": 0,
+            "1803": 0,
+            "1804": 1,
+            "1809": 0,
+            "1812": 0,
+            "1A00": 131072,
+            "1A02": 0,
+            "1A03": 0,
+            "1A04": 3,
+            "1A05": 1,
+            "1A06": 0,
+            "1A10": 1,
+            "1C00": 65536,
+            "2000": 0,
+            "2005": 0,
+            "2007": 65536,
+            "2100": 0,
+            "2101": 0,
+            "2102": 3,
+            "2103": 0,
+            "2104": 0,
+            "2105": 0,
+            "2106": 0,
+            "2107": 0,
+            "2108": 3,
+            "2200": 3,
+            "2201": 3,
+            "2300": 1,
+            "2301": 0,
+            "2302": 3,
+            "2400": 0,
+            "2401": 0,
+            "2402": 0,
+            "2600": 0,
+            "2700": 3,
+            "2701": 0,
+            "2702": 0,
+            "2703": 0,
+            "2704": 0,
+            "2708": 3,
+            "2709": 3,
+            "270B": 0,
+            "270C": 3,
+            "270D": 0,
+            "120B": 0
+        },
+        "3": {
+            "2001": 0,
+            "2004": 0,
+            "": "",
+            "DisplayName": "Internet",
+            "PMDisplayName": "Internet [Protected Mode]",
+            "Description": "This zone contains all Web sites you haven't placed in other zones",
+            "Icon": "inetcpl.cpl#001313",
+            "LowIcon": "inetcpl.cpl#005425",
+            "CurrentLevel": 70912,
+            "Flags": 1,
+            "1200": 0,
+            "1400": 0,
+            "1001": 1,
+            "1004": 3,
+            "1201": 3,
+            "1206": 3,
+            "1207": 3,
+            "1208": 3,
+            "1209": 3,
+            "120A": 3,
+            "120C": 3,
+            "1402": 0,
+            "1405": 0,
+            "1406": 3,
+            "1407": 1,
+            "1408": 3,
+            "1409": 0,
+            "140A": 0,
+            "140C": 3,
+            "140D": 0,
+            "1601": 0,
+            "1604": 0,
+            "1605": 0,
+            "1606": 0,
+            "1607": 3,
+            "1608": 0,
+            "1609": 1,
+            "160A": 3,
+            "160B": 0,
+            "1802": 0,
+            "1803": 0,
+            "1804": 1,
+            "1809": 0,
+            "1812": 1,
+            "1A00": 131072,
+            "1A02": 0,
+            "1A03": 0,
+            "1A04": 3,
+            "1A05": 1,
+            "1A06": 0,
+            "1C00": 65536,
+            "2000": 0,
+            "2005": 3,
+            "2007": 65536,
+            "2100": 0,
+            "2101": 0,
+            "2102": 3,
+            "2103": 3,
+            "2104": 3,
+            "2105": 3,
+            "2106": 0,
+            "2107": 3,
+            "2200": 3,
+            "2201": 3,
+            "2300": 1,
+            "2301": 0,
+            "2302": 3,
+            "2400": 3,
+            "2401": 0,
+            "2402": 3,
+            "2600": 0,
+            "2700": 0,
+            "2701": 0,
+            "2702": 0,
+            "2703": 3,
+            "2704": 0,
+            "2708": 3,
+            "2709": 3,
+            "270B": 3,
+            "270C": 0,
+            "270D": 3,
+            "120B": 3,
+            "1A10": 1
+        },
+        "4": {
+            "2001": 3,
+            "2004": 3,
+            "": "",
+            "DisplayName": "Restricted sites",
+            "PMDisplayName": "Restricted sites [Protected Mode]",
+            "Description": "This zone contains Web sites that could potentially damage your computer or data.",
+            "Icon": "inetcpl.cpl#00004481",
+            "LowIcon": "inetcpl.cpl#005426",
+            "CurrentLevel": 0,
+            "Flags": 3,
+            "1200": 3,
+            "1400": 3,
+            "1C00": 0,
+            "1406": 0
+        }
+    }
+}
