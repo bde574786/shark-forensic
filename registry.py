@@ -1,57 +1,8 @@
-import winreg
-import json
-import chardet
-import string
-
-def get_registry_data(hive, key_path, depth=0, max_depth=1):
-    if depth > max_depth:
-        return {'info': 'Reached max depth'}
-
-    try:
-        with winreg.OpenKey(hive, key_path, 0, winreg.KEY_READ) as key:
-            main_key = {}
-            value_count = 0
-            subkey_count = 0
-
-            while True:
-                try:
-                    name, value, type = winreg.EnumValue(key, value_count)
-                    main_key[name] = value
-                    value_count += 1
-                except OSError:
-                    break
-
-            while True:
-                try:
-                    subkey_name = winreg.EnumKey(key, subkey_count)
-                    subkey_path = f"{key_path}\\{subkey_name}"
-                    subkey_values = get_registry_data(hive, subkey_path, depth + 1, max_depth)
-                    main_key[subkey_name] = subkey_values
-                    subkey_count += 1
-                except OSError:
-                    break
-        return main_key
-    
-    except FileNotFoundError:
-        print(f"Cannot find the key: {key_path}")
-        return {}
-
-def decode_registry_data(data):
-    encoding_info = chardet.detect(data)
-
-    try:
-        if encoding_info['encoding'] and encoding_info['confidence'] > 0.7:
-            print(encoding_info)
-            return data.decode(encoding_info['encoding'])
-        else:
-            raise ValueError("인코딩 형식 신뢰 불가")
-
-    except UnicodeDecodeError:
-        raise ValueError("디코딩 실패")
-
-data = b"46000000130000000900000000000000550000003132372e302e302e313a31363130353b3132372e302e302e313a31363130363b3132372e302e302e313a31363130373b3b3132372e302e302e313a32313330303b3b2a2e6c6f63616c3b3b6c6f63616c686f73743b000000000000000000000000000000000000000000000000000000000000000000000000"
-
-print(data.decode('ascii'))
+import struct
+from decryption import *
+from decoding import *
+from registry_data import *
+from data_saver import *
 
 def get_current_user_sid():
     import locale
@@ -68,198 +19,243 @@ def get_current_user_sid():
     else:
         return "No SID"
 
-def save_json(data, file_name):
-    json_data = json.dumps(data, indent=4)
+def extract_user_assist():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\Count"
+    data = get_registry_data(hive, key_path)
+    result = []
 
-    with open(file_name, "w") as json_file:
-        json_file.write(json_data)
+    if data:
+        for name, value, type in data:
+            decrypted_name = decrypt_rot13(name)
+            if ".exe" in decrypted_name:
+                result.append([decrypted_name])
+        
+    save_to_excel(result, "user_assist", 'file path')
+
+def extract_current_user_startup_programs():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
+    data = get_registry_data(hive, key_path)
+    result = []
+
+    for name, value, type in data:
+        result.append([name, value])
+    
+    save_to_excel(result, "current_user_startup_programs", "name", "file_path")
+
+def extract_current_user_installed_programs():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Uninstall"
+    subkeys = get_registry_subkey(hive, key_path)
+    result = []
+
+    for i in range(len(subkeys)):
+        subkey_path = fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{subkeys[i]}"
+        result.append(query_registry_data(hive, subkey_path, "DisplayName", "DisplayIcon", "DisplayVersion", "InstallDate", "InstallLocation"))
+
+    save_to_excel(result, "current_user_installed_programs", "display_name", "display_icon", "display_version", "install_date", "install_location")
+
+def extract_current_user_internet_settings():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+    result = get_registry_hierarchical_data(hive, key_path)
+    save_to_json(result, "current_user_internet_settings")
+
+# Decodig Todo
+def extract_recent_document():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
+    return get_registry_data(hive, key_path)
+
+def extract_recent_url():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Internet Explorer\TypedURLs"
+    result = []
+
+    data = get_registry_data(hive, key_path)
+    for i in range(len(data)):
+        result.append(data[i][1])
+
+    save_to_excel(result, "recent_urls", "url")
 
 
+def extract_recent_search():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery"
+    key_data = get_registry_data(hive, key_path)
+    subkeys = get_registry_subkey(hive, key_path)
 
-class HKEY_CLASSES_ROOT_Extractor:
+    all_searches = {}
 
-    # 특정 확장자와 연결되어 있는 애플리케이션(악성 파일 실행이나 문서 열람 등의 활동 추적 가능)
-    @staticmethod
-    def extract_file_associations():
-        extensions = [
-            ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
-            ".pdf", ".txt", ".rtf", ".jpg", ".jpeg", ".png",
-            ".gif", ".bmp", ".tif", ".tiff", ".mp3", ".wav",
-            ".mp4", ".mov", ".avi", ".mkv", ".zip", ".rar",
-            ".7z", ".exe", ".msi", ".bat", ".sh", ".html",
-            ".htm", ".css", ".js", ".json", ".xml", ".c",
-            ".cpp", ".py", ".java", ".php", ".dll"
-        ]
+    main_searches = extract_searches_from_key_data(key_data)
+    if main_searches:
+        all_searches["Main"] = main_searches
 
-        hive = winreg.HKEY_CLASSES_ROOT
-        associations = {}
+    for subkey in subkeys:
+        subkey_data = get_registry_data(hive, "{}\{}".format(key_path, subkey))
+        subkey_searches = extract_searches_from_key_data(subkey_data)
+        if subkey_searches:
+            all_searches[subkey] = subkey_searches
+    data = ""
 
-        for i in range(len(extensions)):
-            try:
-                key_path = f"{extensions[i]}"
-                associations[extensions[i]] = get_registry_data(hive, key_path, max_depth=2)
-            except Exception as e:
-                associations[i] = None
-                
-        return associations
+    for key, searches in all_searches.items():
+        data += f"Key: {key}\n"
+        for search in searches:
+            data += f"  - {search}\n"
+    save_to_notepad(data, "recent_research")
 
+def extract_searches_from_key_data(key_data):
+    mru_list_ex_value = next((item for item in key_data if item[0] == 'MRUListEx'), None)
+    if not mru_list_ex_value:
+        return None
 
+    mru_list_ex_data = mru_list_ex_value[1]
+    mru_indexes = struct.unpack('<' + 'I' * (len(mru_list_ex_data) // 4), mru_list_ex_data)
+    mru_indexes = [index for index in mru_indexes if index != 0xFFFFFFFF]
 
-class HKEY_CURRENT_USER_Extractor:
+    searches = []
+    for index in mru_indexes:
+        search_data_value = next((item for item in key_data if item[0] == str(index)), None)
+        if search_data_value:
+            search_data = search_data_value[1]
+            searches.append(decode_utf16(search_data))
+    return searches
+    
+def extract_print_history():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Printers"
+    result = get_registry_hierarchical_data(hive, key_path)
+    save_to_json(result, 'print_history')
 
-    # 시작 프로그램 목록
-    @staticmethod
-    def extract_current_user_startup_programs():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
-        return get_registry_data(hive, key_path)
+def extract_current_user_policy():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"SOFTWARE\Policies\Microsoft"
+    result = get_registry_hierarchical_data(hive, key_path)
+    save_to_json(result, 'user_policy')
 
-    # 설치된 프로그램 목록
-    @staticmethod
-    def extract_current_user_installed_programs():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software"
-        return get_registry_data(hive, key_path, max_depth=3)
+def extract_current_user_security_authentication():
+    hive = winreg.HKEY_CURRENT_USER
+    key_path = r"Software\Microsoft\SystemCertificates"
+    result = get_registry_hierarchical_data(hive, key_path)
+    save_to_json(result, 'user_security_authentication')
 
-    # 인터넷 설정 정보
-    @staticmethod
-    def extract_current_user_internet_settings():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
-        return get_registry_data(hive, key_path)
+def extract_file_associations():
+    extensions = [
+        ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx",
+        ".pdf", ".txt", ".rtf", ".jpg", ".jpeg", ".png",
+        ".gif", ".bmp", ".tif", ".tiff", ".mp3", ".wav",
+        ".mp4", ".mov", ".avi", ".mkv", ".zip", ".rar",
+        ".7z", ".exe", ".msi", ".bat", ".sh", ".html",
+        ".htm", ".css", ".js", ".json", ".xml", ".c",
+        ".cpp", ".py", ".java", ".php", ".dll"
+    ]
 
-    # 최근 문서 목록 정보
-    @staticmethod
-    def extract_recent_document():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
-        return get_registry_data(hive, key_path)
+    hive = winreg.HKEY_CLASSES_ROOT
+    result = {}
 
-    # 최근 검색 정보
-    @staticmethod
-    def extract_recent_search():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery"
-        return get_registry_data(hive, key_path)
+    for i in range(len(extensions)):
+        try:
+            key_path = f"{extensions[i]}"
+            result[extensions[i]] = get_registry_hierarchical_data(hive, key_path)
+        except Exception as e:
+            result[i] = None
+            
+    save_to_json(result, 'file_associations')
 
-    # 프린터 연결 정보
-    @staticmethod
-    def extract_print_history():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Printers\Connections"
-        return get_registry_data(hive, key_path)
-
-    # 그룹 정책
-    @staticmethod
-    def extract_current_user_policy():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"SOFTWARE\Policies\Microsoft"
-        return get_registry_data(hive, key_path, max_depth=3)
-
-    # 보안 인증서 및 인증 기관
-    @staticmethod
-    def extract_current_user_security_authentication():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\SystemCertificates"
-        return get_registry_data(hive, key_path)
-
-    @staticmethod
-    def extract_user_assist():
-        hive = winreg.HKEY_CURRENT_USER
-        key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\Count"
-        return get_registry_data(hive, key_path)
-
-class HKEY_LOCAL_MACHINE_Extractor:
-
-    # 시작 프로그램 목록
-    @staticmethod
-    def extract_all_users_startup_programs():
+def extract_all_users_startup_programs():
         hive = winreg.HKEY_LOCAL_MACHINE
         key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-        return get_registry_data(hive, key_path)
+        data = get_registry_data(hive, key_path)
+        result = []
 
-    # USB 장치의 연결 및 이력 정보
-    @staticmethod
-    def extract_usb_history():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SYSTEM\CurrentControlSet\Enum\USB"
-        return get_registry_data(hive, key_path)
+        for name, value, type in data:
+            result.append([name, value])
 
-    # 설치된 프로그램 목록    
-    @staticmethod
-    def extract_all_users_installed_programs():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-        return get_registry_data(hive, key_path)
+        save_to_excel(result, "all_users_startup_programs", "name", "file_path")
 
-    # 로그온 UI 설정 정보
-    @staticmethod
-    def extract_logon_ui_settings():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI"
-        return get_registry_data(hive, key_path)
 
-    # 시스템 서비스 설정 및 정보
-    @staticmethod
-    def extract_system_services():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SYSTEM\CurrentControlSet\Services"
-        return get_registry_data(hive, key_path, max_depth=4)
+def extract_usb_history():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SYSTEM\CurrentControlSet\Enum\USB"
+    result = get_registry_hierarchical_data(hive, key_path)
+    save_to_json(result, "usb_history")
 
-    # 네트워크 어댑터 설정 정보
-    @staticmethod
-    def extract_network_adapters():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
-        return get_registry_data(hive, key_path)
+def extract_all_users_installed_programs():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+    subkeys = get_registry_subkey(hive, key_path)
+    result = []
+
+    for i in range(len(subkeys)):
+        subkey_path = fr"Software\Microsoft\Windows\CurrentVersion\Uninstall\{subkeys[i]}"
+        result.append(query_registry_data(hive, subkey_path, "DisplayName", "DisplayIcon", "DisplayVersion", "InstallDate", "InstallLocation"))
+
+    save_to_excel(result, "all_users_installed_programs", "display_name", "display_icon", "display_version", "install_date", "install_location")
+
+def extract_logon_ui_settings():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI"
+    result = get_registry_hierarchical_data(hive, key_path)
     
-    # 그룹 보안 정책
-    @staticmethod
-    def extract_local_machine_policy():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SOFTWARE\Policies\Microsoft"
-        return get_registry_data(hive, key_path, max_depth=4)
+    save_to_json(result, "logon_ui_settings")
 
-    # 방화벽 정책
-    @staticmethod
-    def extract_firewall_policy():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy"
-        return get_registry_data(hive, key_path)
+def extract_system_services():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SYSTEM\CurrentControlSet\Services"
+    result = get_registry_hierarchical_data(hive, key_path)
 
-    # 보안 공급자 및 인증
-    @staticmethod
-    def extract_security_providers():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SYSTEM\CurrentControlSet\Control\SecurityProviders"
-        return get_registry_data(hive, key_path)
+    save_to_json(result, "system_services")
 
-    # 보안 인증서 및 인증 기관
-    def extract_local_machine_security_authentication():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SOFTWARE\Microsoft\SystemCertificates"
-        return get_registry_data(hive, key_path)
+def extract_network_adapters():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
+    result = get_registry_hierarchical_data(hive, key_path)
 
-    # 네트워크 프로필
-    def extract_network_profile():
-        hive = winreg.HKEY_LOCAL_MACHINE
-        key_path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles"
-        return get_registry_data(hive, key_path)
+    save_to_json(result, "network_adapters")
 
-class HKEY_USERS_Extractor:
+def extract_local_machine_policy():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SOFTWARE\Policies\Microsoft"
+    result = get_registry_hierarchical_data(hive, key_path)
 
-    # 현재 사용자의 응용 프로그램 정보
-    @staticmethod
-    def extract_user_application_history():
+    save_to_json(result, "local_machine_policy")
+
+def extract_firewall_policy():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy"
+    result = get_registry_hierarchical_data(hive, key_path)
+
+    save_to_json(result, "firewall_policy")
+
+def extract_security_providers():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SYSTEM\CurrentControlSet\Control\SecurityProviders"
+    result = get_registry_hierarchical_data(hive, key_path)
+
+    save_to_json(result, "security_providers")
+
+def extract_local_machine_security_authentication():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SOFTWARE\Microsoft\SystemCertificates"
+    result = get_registry_hierarchical_data(hive, key_path)
+
+    save_to_json(result, "local_machine_security_authentication")
+
+def extract_network_profile():
+    hive = winreg.HKEY_LOCAL_MACHINE
+    key_path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles"
+    result = get_registry_hierarchical_data(hive, key_path)
+
+    save_to_json(result, "network_profile")
+
+def extract_user_application_history():
         hive = winreg.HKEY_USERS
         sid = get_current_user_sid()
         key_path = fr"{sid}\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist"
-        return get_registry_data(hive, key_path, max_depth=3)
+        result = get_registry_hierarchical_data(hive, key_path)
 
-
-
-#save_json(HKEY_LOCAL_MACHINE_Extractor.extract_local_machine_security_authentication(), "registry_data.json")
-# print(HKEY_CURRENT_USER_Extractor.extract_current_user_installed_programs())
+        save_to_json(result, "user_application_history")
 
 
 '''
@@ -319,3 +315,34 @@ class HKEY_USERS_Extractor:
     - 시스템 복원 및 백업 정보 (System restore and backup)
         파일 시스템
 '''
+
+# HKEY_CLASSES_ROOT
+extract_file_associations() # 자주쓰는 파일 확장자의 연결된 프로그램 목록
+
+# HKEY_CURRENT_USER
+extract_user_assist() # 실행된 프로그램
+extract_current_user_startup_programs() # 시작 프로그램 정보
+extract_current_user_installed_programs() # 설치된 프로그램
+extract_current_user_internet_settings() # 인터넷 설정
+extract_recent_document() # 최근 문서 목록
+extract_recent_url() # Internet Explorer 브라우저에 입력한 URL 목록
+extract_recent_search() # 파일 탐색기에 입력한 검색어 기록
+extract_print_history() # 프린터 정보
+extract_current_user_policy() # 그룹 보안 정책 
+extract_current_user_security_authentication() # 보안 인증서 및 인증 기관
+
+# HKEY_LOCAL_MACHINE 
+extract_all_users_startup_programs() # 시작 프로그램 정보
+extract_usb_history() # USB 장치의 연결 및 이력 정보
+extract_all_users_installed_programs() # 설치된 프로그램 목록 
+extract_logon_ui_settings() # 로그온 UI 설정 정보
+extract_system_services() # 시스템 서비스 설정 및 정보
+extract_network_adapters() # 네트워크 어댑터 설정 정보 
+extract_local_machine_policy() # 그룹 보안 정책
+extract_firewall_policy() # 방화벽 정책
+extract_security_providers() # 보안 공급자 및 인증
+extract_local_machine_security_authentication() # 보안 인증서 및 인증 기관
+extract_network_profile() # 네트워크 프로필
+
+# HKEY_USERS
+extract_user_application_history() # 현재 사용자의 응용 프로그램 정보
