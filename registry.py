@@ -85,7 +85,7 @@ def extract_recent_search():
     key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery"
     key_data = get_registry_data(hive, key_path)
     subkeys = get_registry_subkey(hive, key_path)
-
+    
     all_searches = {}
 
     main_searches = extract_searches_from_key_data(key_data)
@@ -97,6 +97,7 @@ def extract_recent_search():
         subkey_searches = extract_searches_from_key_data(subkey_data)
         if subkey_searches:
             all_searches[subkey] = subkey_searches
+    
     data = ""
 
     for key, searches in all_searches.items():
@@ -107,8 +108,8 @@ def extract_recent_search():
 
 def extract_searches_from_key_data(key_data):
     mru_list_ex_value = next((item for item in key_data if item[0] == 'MRUListEx'), None)
-    if not mru_list_ex_value:
-        return None
+    if mru_list_ex_value is None:
+        return []
 
     mru_list_ex_data = mru_list_ex_value[1]
     mru_indexes = struct.unpack('<' + 'I' * (len(mru_list_ex_data) // 4), mru_list_ex_data)
@@ -173,7 +174,6 @@ def extract_all_users_startup_programs():
             result.append([name, value])
 
         save_to_excel(result, "all_users_startup_programs", "name", "file_path")
-
 
 def extract_usb_history():
     hive = winreg.HKEY_LOCAL_MACHINE
@@ -315,6 +315,7 @@ def extract_user_application_history():
     - 시스템 복원 및 백업 정보 (System restore and backup)
         파일 시스템
 '''
+
 
 # HKEY_CLASSES_ROOT
 extract_file_associations() # 자주쓰는 파일 확장자의 연결된 프로그램 목록
